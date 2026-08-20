@@ -35,6 +35,14 @@ enum SlotDuration {
 }
 
 @doc("Тип события (вид брони)")
+@example(#{
+  id: "et-consult",
+  name: "Консультация",
+  description: "Консультация по вашему проекту",
+  durationMinutes: SlotDuration.min30,
+  availableFrom: plainTime.fromISO("09:00:00"),
+  availableTo: plainTime.fromISO("18:00:00"),
+})
 model EventType {
   @doc("Идентификатор, присваивается системой при создании")
   id: string;
@@ -56,6 +64,13 @@ model EventType {
 }
 
 @doc("Данные для создания типа события")
+@example(#{
+  name: "Консультация",
+  description: "Консультация по вашему проекту",
+  durationMinutes: SlotDuration.min30,
+  availableFrom: plainTime.fromISO("09:00:00"),
+  availableTo: plainTime.fromISO("18:00:00"),
+})
 model EventTypeCreate {
   @doc("Название")
   name: string;
@@ -92,6 +107,14 @@ model EventTypeUpdate {
 }
 
 @doc("Бронирование слота")
+@example(#{
+  id: "bk-1",
+  eventTypeId: "et-consult",
+  startsAt: utcDateTime.fromISO("2026-08-24T09:00:00Z"),
+  endsAt: utcDateTime.fromISO("2026-08-24T09:30:00Z"),
+  guestName: "Иван Петров",
+  guestEmail: "ivan@example.com",
+})
 model Booking {
   @doc("Идентификатор, присваивается системой")
   id: string;
@@ -118,6 +141,12 @@ model Booking {
 }
 
 @doc("Данные для создания бронирования")
+@example(#{
+  eventTypeId: "et-consult",
+  startsAt: utcDateTime.fromISO("2026-08-24T09:00:00Z"),
+  guestName: "Иван Петров",
+  guestEmail: "ivan@example.com",
+})
 model BookingCreate {
   @doc("Идентификатор выбранного типа события")
   eventTypeId: string;
@@ -134,6 +163,10 @@ model BookingCreate {
 }
 
 @doc("Свободный слот")
+@example(#{
+  startsAt: utcDateTime.fromISO("2026-08-24T09:00:00Z"),
+  endsAt: utcDateTime.fromISO("2026-08-24T09:30:00Z"),
+})
 model Slot {
   @doc("Дата и время начала")
   startsAt: utcDateTime;
@@ -147,6 +180,10 @@ model Slot {
 // ---------------------------------------------------------------------------
 
 @doc("Ресурс не найден")
+@example(#{
+  statusCode: 404,
+  message: "Ресурс не найден",
+})
 @error
 model NotFoundError {
   @statusCode statusCode: 404;
@@ -158,6 +195,10 @@ model NotFoundError {
 Слот занят: интервал новой брони [startsAt, endsAt) пересекается с интервалом
 существующего бронирования (любого типа события).
 """)
+@example(#{
+  statusCode: 409,
+  message: "Выбранное время уже занято",
+})
 @error
 model SlotConflictError {
   @statusCode statusCode: 409;
@@ -169,6 +210,10 @@ model SlotConflictError {
 Слот недопустим: не совпадает с сеткой слотов типа события, выходит за пределы
 ежедневного диапазона, находится в прошлом или за пределами окна в 14 дней.
 """)
+@example(#{
+  statusCode: 422,
+  message: "Слот недопустим",
+})
 @error
 model InvalidSlotError {
   @statusCode statusCode: 422;
