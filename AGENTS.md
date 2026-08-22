@@ -46,4 +46,5 @@ There is no frontend test or lint script. `npm run build` is the only frontend v
 - `src/pages/` — route components; `src/components/` — shared UI (layout, modals).
 - Routes: `/` (guest list), `/event-types/:eventTypeId` (slots + booking), `/admin` (bookings), `/admin/event-types` (CRUD). No auth anywhere.
 - Temporal values come from the API as `HH:mm:ss` (`availableFrom`/`availableTo`) and ISO timestamps; use `src/utils/time.ts` helpers for grouping/formatting.
+- Time is always shown in 24-hour format (`HH:mm`); never use AM/PM.
 - Tabler icons in this version are prefixed: `IconCalendarEvent`, `IconInfoCircle`, etc. (no bare `CalendarEvent`).

@@ -7,7 +7,7 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { TimeInput } from '@mantine/dates';
+import { TimePicker } from '@mantine/dates';
 import { useState } from 'react';
 import { useCreateEventType, useUpdateEventType } from '../api/hooks';
 import { SLOT_DURATIONS } from '../api/types';
@@ -111,20 +111,22 @@ export function EventTypeFormModal({ opened, onClose, eventType }: EventTypeForm
         />
         <Grid>
           <Grid.Col span={6}>
-            <TimeInput
+            <TimePicker
               label="Начало окна"
               required
+              format="24h"
               value={form.availableFrom}
-              onChange={(e) => set('availableFrom', e.currentTarget.value)}
+              onChange={(value) => set('availableFrom', value)}
               disabled={isPending}
             />
           </Grid.Col>
           <Grid.Col span={6}>
-            <TimeInput
+            <TimePicker
               label="Конец окна"
               required
+              format="24h"
               value={form.availableTo}
-              onChange={(e) => set('availableTo', e.currentTarget.value)}
+              onChange={(value) => set('availableTo', value)}
               disabled={isPending}
             />
           </Grid.Col>

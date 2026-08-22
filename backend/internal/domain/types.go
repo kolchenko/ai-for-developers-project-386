@@ -24,3 +24,8 @@ type Slot struct {
 	StartsAt time.Time
 	EndsAt   time.Time
 }
+
+type Admin struct {
+	Username     string
+	PasswordHash string
+}

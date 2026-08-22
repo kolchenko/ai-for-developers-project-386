@@ -18,3 +18,11 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 CREATE INDEX IF NOT EXISTS idx_bookings_event_type_id ON bookings(event_type_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_starts_at ON bookings(starts_at);
+
+CREATE TABLE IF NOT EXISTS admins (
+  username      TEXT PRIMARY KEY,
+  password_hash TEXT NOT NULL
+);
+
+INSERT OR IGNORE INTO admins (username, password_hash)
+  VALUES ('admin', '21232f297a57a5a743894a0e4a801fc3');

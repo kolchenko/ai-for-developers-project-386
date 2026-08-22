@@ -3,6 +3,7 @@ import {
   adminCancelBooking,
   adminCreateEventType,
   adminDeleteEventType,
+  adminLogin,
   adminUpcomingBookings,
   adminUpdateEventType,
   createBooking,
@@ -19,6 +20,10 @@ export const queryKeys = {
 
 export function useEventTypes() {
   return useQuery({ queryKey: queryKeys.eventTypes, queryFn: listEventTypes });
+}
+
+export function useAdminLogin() {
+  return useMutation({ mutationFn: adminLogin });
 }
 
 export function useSlots(eventTypeId: string) {

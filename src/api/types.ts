@@ -31,7 +31,16 @@ export interface Slot {
   endsAt: string;
 }
 
-export type ApiErrorKind = 404 | 409 | 422;
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  username: string;
+}
+
+export type ApiErrorKind = 401 | 404 | 409 | 422;
 
 export class ApiError extends Error {
   readonly status: number;
@@ -45,6 +54,8 @@ export class ApiError extends Error {
 
 export function getErrorMessage(status: number): string {
   switch (status) {
+    case 401:
+      return 'Неверный логин или пароль';
     case 404:
       return 'Ресурс не найден';
     case 409:

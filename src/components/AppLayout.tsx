@@ -9,10 +9,12 @@ export function AppLayout() {
     <AppShell header={{ height: 60 }} padding="md">
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
-          <Group gap="xs">
-            <IconCalendarEvent size={24} />
-            <Title order={4}>Календарь звонков</Title>
-          </Group>
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Group gap="xs" style={{ cursor: 'pointer' }}>
+              <IconCalendarEvent size={24} />
+              <Title order={4}>Календарь звонков</Title>
+            </Group>
+          </Link>
           <Group gap="sm">
             <Button
               variant={pathname === '/' ? 'filled' : 'light'}

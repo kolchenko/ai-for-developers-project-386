@@ -22,6 +22,7 @@ func (s *Server) routes() http.Handler {
 	mux.HandleFunc("GET /event-types", s.listEventTypes)
 	mux.HandleFunc("GET /event-types/{eventTypeId}/slots", s.getSlots)
 	mux.HandleFunc("POST /bookings", s.createBooking)
+	mux.HandleFunc("POST /admin/login", s.adminLogin)
 	mux.HandleFunc("POST /admin/event-types", s.adminCreateEventType)
 	mux.HandleFunc("PATCH /admin/event-types/{eventTypeId}", s.adminUpdateEventType)
 	mux.HandleFunc("DELETE /admin/event-types/{eventTypeId}", s.adminDeleteEventType)

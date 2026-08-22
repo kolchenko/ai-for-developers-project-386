@@ -1,5 +1,14 @@
 import { api } from './client';
-import type { Booking, BookingCreate, EventType, EventTypeCreate, EventTypeUpdate, Slot } from './types';
+import type {
+  Booking,
+  BookingCreate,
+  EventType,
+  EventTypeCreate,
+  EventTypeUpdate,
+  LoginRequest,
+  LoginResponse,
+  Slot,
+} from './types';
 
 export async function listEventTypes(): Promise<EventType[]> {
   const { data } = await api.get<EventType[]>('/event-types');
@@ -13,6 +22,11 @@ export async function getSlots(eventTypeId: string): Promise<Slot[]> {
 
 export async function createBooking(booking: BookingCreate): Promise<Booking> {
   const { data } = await api.post<Booking>('/bookings', booking);
+  return data;
+}
+
+export async function adminLogin(credentials: LoginRequest): Promise<LoginResponse> {
+  const { data } = await api.post<LoginResponse>('/admin/login', credentials);
   return data;
 }
 

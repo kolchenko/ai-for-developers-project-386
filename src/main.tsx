@@ -9,6 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import { AdminAuthProvider } from './auth';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,9 +25,11 @@ createRoot(document.getElementById('root')!).render(
     <MantineProvider>
       <Notifications position="top-right" />
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <AdminAuthProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AdminAuthProvider>
       </QueryClientProvider>
     </MantineProvider>
   </StrictMode>,
