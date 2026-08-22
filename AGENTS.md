@@ -1,17 +1,31 @@
 # AGENTS.md
 
-Frontend for the «Календарь звонков» booking app. The API contract is defined in TypeSpec (`main.tsp`); there is **no backend** — during development the API is mocked by Prism from the generated OpenAPI spec. UI is React 19 + Mantine 9 + React Query 5, served by Vite.
+Frontend for the «Календарь звонков» booking app. The API contract is defined in TypeSpec (`main.tsp`). UI is React 19 + Mantine 9 + React Query 5, served by Vite. The backend lives in `backend/` (Go + SQLite) and serves the same API on :4010; during development it can be replaced by Prism from the generated OpenAPI spec.
 
 ## Commands
 
 ```sh
 npm run dev      # Vite dev server on :5173 (proxies /api -> http://127.0.0.1:4010)
-npm run mock     # compile main.tsp -> OpenAPI, then Prism mock on :4010
 npm run openapi  # compile main.tsp -> tsp-output/openapi.yaml (gitignored)
 npm run build    # verification: tsc --noEmit && vite build
+
+cd backend
+go run ./cmd/server          # Go backend on :4010 (ADDR, DB_PATH env overrides)
+go test ./...                # unit + handler tests
+go vet ./...                 # static checks
 ```
 
-There is no test or lint script. `npm run build` is the only local verification; Hexlet tests run in CI on push (`.github/workflows/hexlet-check.yml`, do not edit).
+There is no frontend test or lint script. `npm run build` is the only frontend verification; `go test ./...` + `go vet ./...` cover the backend. Hexlet tests run in CI on push (`.github/workflows/hexlet-check.yml`, do not edit).
+
+## Backend notes
+
+- Stack: Go >= 1.22 (`net/http` ServeMux with method+path patterns), SQLite via `modernc.org/sqlite` (pure Go, no cgo). Module `callcalendar/backend`.
+- All timestamps are UTC RFC3339 (`…Z`); `availableFrom`/`availableTo` are `HH:mm:ss`. The «current date» and the daily slot grid are computed in UTC.
+- Slot grid: 14 days from today inclusive, step `durationMinutes` inside `[availableFrom, availableTo)`; the last slot must fit entirely. A slot is free if it is not in the past and overlaps no booking (any event type).
+- Booking creation validates in this order: type exists (404) → `startsAt` is a valid grid slot (422) → interval overlap (409). Overlap check + insert run in one transaction.
+- `DELETE /admin/event-types/{id}` cascades to its bookings (FK `ON DELETE CASCADE`, `PRAGMA foreign_keys=ON` is set via DSN).
+- `GET /admin/bookings` returns bookings with `starts_at >= now`, ascending.
+- `src/api/endpoints.ts` must match the emitted OpenAPI paths. Known trap: the `upcoming()` operation under `@route("/admin/bookings")` emits as **`GET /admin/bookings`**, not `/admin/bookings/upcoming`.
 
 ## Environment gotchas
 
