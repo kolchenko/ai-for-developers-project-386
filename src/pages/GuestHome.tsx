@@ -29,7 +29,14 @@ export function GuestHome() {
         <LoadingOverlay visible={isLoading} zIndex={1000} />
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
           {(eventTypes ?? []).map((eventType) => (
-            <Card key={eventType.id} shadow="sm" padding="lg" radius="md" withBorder>
+            <Card
+              key={eventType.id}
+              data-testid={`event-type-card-${eventType.id}`}
+              shadow="sm"
+              padding="lg"
+              radius="md"
+              withBorder
+            >
               <Stack gap="xs">
                 <Title order={3}>{eventType.name}</Title>
                 <Text>{eventType.description}</Text>

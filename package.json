@@ -9,7 +9,10 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "openapi": "tsp compile main.tsp",
-    "mock": "tsp compile main.tsp && prism mock tsp-output/openapi.yaml -p 4010"
+    "mock": "tsp compile main.tsp && prism mock tsp-output/openapi.yaml -p 4010",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:install": "playwright install chromium"
   },
   "repository": {
     "type": "git",
@@ -36,6 +39,7 @@
     "react-router-dom": "^7.18.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@stoplight/prism-cli": "^5.16.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
