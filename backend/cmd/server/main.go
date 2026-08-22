@@ -19,7 +19,7 @@ func main() {
 	}
 	defer st.Close()
 
-	handler := api.NewServer(st)
+	handler := api.NewServerWithWeb(st, cfg.WebDir)
 
 	srv := &http.Server{
 		Addr:              cfg.Addr,

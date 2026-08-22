@@ -3,8 +3,11 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -23,6 +26,52 @@ var fixedNow = func() time.Time {
 type testEnv struct {
 	ts    *httptest.Server
 	store *store.Store
+}
+
+func TestPrefixedAPIRoutes(t *testing.T) {
+	ts := newTestServer(t)
+
+	status, body := doJSON(t, http.MethodGet, ts.URL+"/api/event-types", "")
+	if status != http.StatusOK {
+		t.Fatalf("prefixed list: status %d", status)
+	}
+	if got := decode[[]EventTypeDTO](t, body); len(got) != 0 {
+		t.Fatalf("expected empty list, got %+v", got)
+	}
+
+	created := createEventType(t, ts, consultType)
+	status, body = doJSON(t, http.MethodGet, ts.URL+"/api/event-types/"+created.ID+"/slots", "")
+	if status != http.StatusOK {
+		t.Fatalf("prefixed slots: status %d body %s", status, body)
+	}
+	if slots := decode[[]SlotDTO](t, body); len(slots) != 252 {
+		t.Fatalf("expected 252 slots, got %d", len(slots))
+	}
+}
+
+func TestSPAServing(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "index.html"), []byte("<html>spa</html>"), 0o644); err != nil {
+		t.Fatalf("write index: %v", err)
+	}
+	st, err := store.Open(":memory:")
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	t.Cleanup(func() { st.Close() })
+
+	ts := httptest.NewServer(NewServerWithWeb(st, dir))
+	t.Cleanup(ts.Close)
+
+	res, err := http.Get(ts.URL + "/event-types/et-1")
+	if err != nil {
+		t.Fatalf("get spa route: %v", err)
+	}
+	defer res.Body.Close()
+	body, _ := io.ReadAll(res.Body)
+	if res.StatusCode != http.StatusOK || string(body) != "<html>spa</html>" {
+		t.Fatalf("spa fallback: status %d body %s", res.StatusCode, body)
+	}
 }
 
 func newTestEnv(t *testing.T) *testEnv {
