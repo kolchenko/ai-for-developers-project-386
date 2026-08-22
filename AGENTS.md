@@ -17,6 +17,8 @@ go vet ./...                 # static checks
 
 There is no frontend test or lint script. `npm run build` is the only frontend verification; `go test ./...` + `go vet ./...` cover the backend. Hexlet tests run in CI on push (`.github/workflows/hexlet-check.yml`, do not edit).
 
+Releases are automated by release-please (`.github/workflows/release-please.yml`, `release-type: node`). It opens/updates a release PR on every push to `master` **only when** there are conventional commits — use `feat:`, `fix:`, or `deps:` prefixes (a bare `chore:`/`build:` or non-conventional subject is not a releasable unit and produces no PR). To force a specific version, add `Release-As: x.y.z` to the commit body.
+
 ## Backend notes
 
 - Stack: Go >= 1.22 (`net/http` ServeMux with method+path patterns), SQLite via `modernc.org/sqlite` (pure Go, no cgo). Module `callcalendar/backend`.
