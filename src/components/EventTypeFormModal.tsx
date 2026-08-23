@@ -32,11 +32,16 @@ const DURATION_OPTIONS = SLOT_DURATIONS.map((d) => ({
   label: `${d} минут`,
 }));
 
+// 48 вариантов времени — шаг 30 минут в сутках (24 * 2 = 48):
+// от 00:00 до 23:30 включительно. Используется для полей
+// «Начало окна» / «Конец окна» вместо полноценного TimePicker.
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
+  // Каждый второй индекс — это следующий час (i=0..1 -> 00, i=2..3 -> 01 и т.д.).
   const hours = String(Math.floor(i / 2)).padStart(2, '0');
+  // Чётные индексы дают «00» минут, нечётные — «30».
   const minutes = i % 2 === 0 ? '00' : '30';
   return { value: `${hours}:${minutes}`, label: `${hours}:${minutes}` };
-});
+}) satisfies { value: string; label: string }[];
 
 export function EventTypeFormModal({ opened, onClose, eventType }: EventTypeFormModalProps) {
   const createEventType = useCreateEventType();
