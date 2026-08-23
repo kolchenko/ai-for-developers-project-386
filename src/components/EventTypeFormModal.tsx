@@ -7,7 +7,6 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { TimePicker } from '@mantine/dates';
 import { useState } from 'react';
 import { useCreateEventType, useUpdateEventType } from '../api/hooks';
 import { SLOT_DURATIONS } from '../api/types';
@@ -32,6 +31,17 @@ const DURATION_OPTIONS = SLOT_DURATIONS.map((d) => ({
   value: String(d),
   label: `${d} минут`,
 }));
+
+// 48 вариантов времени — шаг 30 минут в сутках (24 * 2 = 48):
+// от 00:00 до 23:30 включительно. Используется для полей
+// «Начало окна» / «Конец окна» вместо полноценного TimePicker.
+const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
+  // Каждый второй индекс — это следующий час (i=0..1 -> 00, i=2..3 -> 01 и т.д.).
+  const hours = String(Math.floor(i / 2)).padStart(2, '0');
+  // Чётные индексы дают «00» минут, нечётные — «30».
+  const minutes = i % 2 === 0 ? '00' : '30';
+  return { value: `${hours}:${minutes}`, label: `${hours}:${minutes}` };
+}) satisfies { value: string; label: string }[];
 
 export function EventTypeFormModal({ opened, onClose, eventType }: EventTypeFormModalProps) {
   const createEventType = useCreateEventType();
@@ -111,22 +121,22 @@ export function EventTypeFormModal({ opened, onClose, eventType }: EventTypeForm
         />
         <Grid>
           <Grid.Col span={6}>
-            <TimePicker
+            <Select
               label="Начало окна"
               required
-              format="24h"
+              data={TIME_OPTIONS}
               value={form.availableFrom}
-              onChange={(value) => set('availableFrom', value)}
+              onChange={(value) => value && set('availableFrom', value)}
               disabled={isPending}
             />
           </Grid.Col>
           <Grid.Col span={6}>
-            <TimePicker
+            <Select
               label="Конец окна"
               required
-              format="24h"
+              data={TIME_OPTIONS}
               value={form.availableTo}
-              onChange={(value) => set('availableTo', value)}
+              onChange={(value) => value && set('availableTo', value)}
               disabled={isPending}
             />
           </Grid.Col>
